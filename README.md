@@ -4,7 +4,7 @@ NixOS configuration for my gaming desktop.
 
 One machine (`station`) plus a VirtualBox guest (`station-vm`) to test the
 config before installing it. The structure is ready for a second real host:
-everything reusable is a module under `modules/` with an `my.<name>.enable`
+everything reusable is a module under `modules/` with a `my.<name>.enable`
 switch.
 
 ## What you get
@@ -95,8 +95,10 @@ Search the repo for `TODO(` to find them all.
    sudo NIX_CONFIG="experimental-features = nix-command flakes" nixos-rebuild switch --flake .#station-vm
    ```
 
-   A flake only sees files that git knows about, which is why the generated
-   file is added with `git add` before the rebuild. Commit it afterwards.
+   `<repo-url>` is wherever this repo is pushed (its `origin` is
+   `https://github.com/theowiik/station.git`; push it first). A flake only
+   sees files that git knows about, which is why the generated file is added
+   with `git add` before the rebuild. Commit it afterwards.
    If your user name differs from the one you created in the installer, set
    a password for it with `sudo passwd <name>` before rebooting.
 4. Reboot. The login screen starts Hyprland by default in the VM, because
@@ -113,10 +115,13 @@ NixOS goes on its own drive. Do not touch the Windows drive.
 3. Install, either way:
    - **With the graphical installer**, like in the VM: pick the NixOS drive
      (check the model and size carefully), "No desktop", the Swedish keyboard
-     and the user from `TODO(user)`. After the reboot, run the commands of VM
-     step 3 with `station` instead of `station-vm`:
+     and the user from `TODO(user)`. After the reboot, log in on the text
+     console and run:
 
      ```sh
+     nix-shell -p git
+     git clone <repo-url> ~/station
+     cd ~/station
      sudo nixos-generate-config --show-hardware-config > hosts/station/hardware-configuration.nix
      git add hosts/station/hardware-configuration.nix
      sudo NIX_CONFIG="experimental-features = nix-command flakes" nixos-rebuild switch --flake .#station
@@ -185,8 +190,9 @@ lock, Print screenshot of an area, Super+Shift+E quit.
 
 ## Gaming notes
 
-- Proton-GE shows up in Steam under Properties, Compatibility, as
-  "GE-Proton".
+- Proton-GE shows up in Steam under Properties, Compatibility, with its
+  version in the name (GE-Proton11-1 in nixpkgs 26.05 at the time of
+  writing).
 - Steam launch options: `mangohud %command%` for the overlay,
   `gamemoderun %command%` for gamemode, or both.
 - If a fullscreen game misbehaves in niri (cursor escapes, wrong size), the
