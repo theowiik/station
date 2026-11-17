@@ -54,9 +54,6 @@ modules/
 
 Search the repo for `TODO(` to find them all.
 
-- `TODO(user)` in both host files: the login name. It starts out as the git
-  user name of this repo. Use the same name when you create the user in the
-  NixOS installer.
 - `hosts/*/hardware-configuration.nix` are placeholders with fake devices, so
   the flake builds before installing. Every build prints a warning until they
   are replaced (see the install steps below).
@@ -83,7 +80,7 @@ Search the repo for `TODO(` to find them all.
    - A disk of 60 GB or more.
 2. Boot the NixOS 26.05 graphical ISO and install. Pick **No desktop** (this
    repo brings the desktop), the Swedish keyboard, and create the user with
-   the name from `TODO(user)` and a password. Reboot into the new system.
+   the name `theo` and a password. Reboot into the new system.
 3. Log in on the text console and switch to this repo:
 
    ```sh
@@ -115,7 +112,7 @@ NixOS goes on its own drive. Do not touch the Windows drive.
 3. Install, either way:
    - **With the graphical installer**, like in the VM: pick the NixOS drive
      (check the model and size carefully), "No desktop", the Swedish keyboard
-     and the user from `TODO(user)`. After the reboot, log in on the text
+     and the user `theo`. After the reboot, log in on the text
      console and run:
 
      ```sh

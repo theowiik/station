@@ -21,9 +21,9 @@ in
   networking.hostName = "station-vm";
   my.locale = locale;
 
-  # TODO(user): the same login name as on station. Create this user in the
-  # NixOS installer too, so it has a password (see README.md).
-  my.user.name = "theowiik";
+  # The same login name as on station. Create this user in the NixOS
+  # installer too, so it has a password (see README.md).
+  my.user.name = "theo";
 
   my.desktop.enable = true;
   my.desktop.defaultSession = "hyprland";

@@ -27,9 +27,8 @@ in
   networking.hostName = "station";
   my.locale = locale;
 
-  # TODO(user): login name. It starts out as the git user name of this repo.
-  # Change it before installing if you want another one.
-  my.user.name = "theowiik";
+  # Login name. Use the same name when creating the user in the installer.
+  my.user.name = "theo";
 
   my.desktop.enable = true;
   my.desktop.defaultSession = "niri";
