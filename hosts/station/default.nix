@@ -1,0 +1,85 @@
+# station: the gaming desktop.
+#
+# Hardware, read from Windows on this machine (November 2026):
+#   CPU       AMD Ryzen 7 9800X3D, 8 cores and 16 threads, integrated Radeon GPU
+#   GPU       NVIDIA GeForce RTX 3070 (GA104, PCI ID 10de:2488), drives the monitor
+#   Board     MSI MAG B650 TOMAHAWK WIFI (MS-7D75), BIOS 1.M0
+#   Network   Realtek 2.5GbE, MediaTek RZ616 (MT7922) Wi-Fi 6E and Bluetooth
+#   Memory    32 GB DDR5
+#   Firmware  UEFI (so systemd-boot), Secure Boot currently on
+#
+# The disk layout, partition UUIDs and kernel modules are deliberately not
+# here. They come from hardware-configuration.nix, which is generated on this
+# machine at install time (it is a placeholder until then).
+{ ... }:
+let
+  # Language, regional formats, time zone and keyboard, in one place.
+  locale = {
+    timeZone = "Europe/Stockholm";
+    language = "en_US.UTF-8"; # messages and menus
+    formats = "sv_SE.UTF-8"; # dates, numbers, currency, paper size, units
+    keyboardLayout = "se";
+  };
+in
+{
+  imports = [ ./hardware-configuration.nix ];
+
+  networking.hostName = "station";
+  my.locale = locale;
+
+  # TODO(user): login name. It starts out as the git user name of this repo.
+  # Change it before installing if you want another one.
+  my.user.name = "theowiik";
+
+  my.desktop.enable = true;
+  my.desktop.defaultSession = "niri";
+  my.nvidia.enable = true;
+  my.gaming.enable = true;
+  my.shell.enable = true;
+  my.devtools.enable = true;
+
+  # AMD microcode, and firmware for the MT7922 Wi-Fi and Bluetooth chip and
+  # the integrated GPU.
+  hardware.cpu.amd.updateMicrocode = true;
+  hardware.enableRedistributableFirmware = true;
+
+  # TODO(suspend): untested. Hibernation is off for every host
+  # (modules/nixos/base.nix); suspend is still allowed. On the real machine,
+  # run `systemctl suspend` and wake it up. If the screen stays black or the
+  # desktop is corrupted after resume, set this to true (it turns on
+  # hardware.nvidia.powerManagement, which saves video memory over suspend),
+  # rebuild and test again. If suspend still fails, add
+  # `systemd.sleep.settings.Sleep.AllowSuspend = "no";` here.
+  my.nvidia.powerManagement = false;
+
+  # TODO(gpu): the integrated Radeon GPU of the 9800X3D is enabled in the
+  # firmware, so Linux sees two GPUs. In Windows the monitor runs on the
+  # RTX 3070 and nothing uses the integrated GPU. Niri and Hyprland should
+  # pick the GPU the firmware booted on. If one of them renders on the wrong
+  # GPU (black screen, or very slow), look up the RTX 3070 with
+  # `ls -l /dev/dri/by-path` and set the matching option below, or turn the
+  # integrated GPU off in the firmware.
+  # my.desktop.niri.renderDevice = "/dev/dri/renderD128";
+  # my.desktop.hyprland.drmDevices = "/dev/dri/card1";
+
+  # TODO(monitor): monitors are detected automatically and no mode is set. In
+  # Windows the monitor runs at 2560x1440 and 164 Hz. If a session picks a
+  # lower refresh rate, list the modes with `niri msg outputs` (niri) or
+  # `hyprctl monitors all` (Hyprland) and add an output to the session config.
+
+  # TODO(steam): if the Steam window is completely black in the niri session,
+  # set this to true (see modules/nixos/gaming.nix).
+  my.gaming.steamDisableGpuCompositing = false;
+
+  # TODO(secure-boot): Secure Boot is on in the firmware. The NixOS installer
+  # and systemd-boot are not signed, so turn Secure Boot off before installing.
+  # To use NixOS with Secure Boot on later (some Windows anti-cheat games
+  # require it), look at lanzaboote.
+
+  # TODO(windows): Windows stays on its own drive and boots from the firmware
+  # boot menu (F11 on MSI boards). To add it to the systemd-boot menu instead,
+  # see boot.loader.systemd-boot.windows; it needs the EFI device handle of the
+  # Windows drive, which can only be read on the machine.
+
+  system.stateVersion = "26.05";
+}
