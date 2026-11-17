@@ -1,0 +1,18 @@
+# Build results from `nix build`.
+result
+result-*
+
+# Editor and OS clutter.
+.direnv/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+
+# Plaintext secrets must never be committed. Secrets management (sops-nix)
+# is a TODO, see "Secrets" in README.md.
+*.key
+*.pem
+*.secret
+.env
+keys.txt
