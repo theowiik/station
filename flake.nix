@@ -13,13 +13,26 @@
   };
 
   outputs =
-    { nixpkgs, ... }:
+    { nixpkgs, home-manager, ... }:
     let
       system = "x86_64-linux";
+
+      # A host is the shared modules plus its own directory under hosts/.
+      mkHost =
+        hostDir:
+        nixpkgs.lib.nixosSystem {
+          modules = [
+            home-manager.nixosModules.home-manager
+            ./modules/nixos
+            hostDir
+          ];
+        };
     in
     {
-      # The hosts are added once their modules exist.
-      nixosConfigurations = { };
+      nixosConfigurations = {
+        station = mkHost ./hosts/station;
+        station-vm = mkHost ./hosts/station-vm;
+      };
 
       # `nix fmt` formats every Nix file in the repo.
       formatter.${system} = nixpkgs.legacyPackages.${system}.nixfmt-tree;
