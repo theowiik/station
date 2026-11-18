@@ -13,6 +13,7 @@ lib.mkIf config.my.desktop.enable {
     discord
     signal-desktop # messaging
     spotify
+    celluloid # video player, a GTK front end for mpv; the default for video
     nautilus # file manager, also the file chooser of the GNOME portal
     file-roller # archives
     pavucontrol # volume control

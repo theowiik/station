@@ -10,6 +10,22 @@ let
       Hidden=true
     '';
   };
+
+  # Common video formats, opened with Celluloid.
+  videoTypes = [
+    "video/mp4"
+    "video/x-matroska"
+    "video/webm"
+    "video/x-msvideo"
+    "video/quicktime"
+    "video/mpeg"
+    "video/x-flv"
+    "video/x-ms-wmv"
+    "video/ogg"
+    "video/3gpp"
+    "video/mp2t"
+    "video/x-m4v"
+  ];
 in
 lib.mkIf osConfig.my.desktop.enable {
   # Mount USB drives as soon as they are plugged in, with a notification.
@@ -39,6 +55,8 @@ lib.mkIf osConfig.my.desktop.enable {
       "x-scheme-handler/http" = "helium.desktop";
       "x-scheme-handler/https" = "helium.desktop";
       "inode/directory" = "org.gnome.Nautilus.desktop";
-    };
+    }
+    # Celluloid (installed in modules/nixos/desktop/apps.nix) for video.
+    // lib.genAttrs videoTypes (_: "io.github.celluloid_player.Celluloid.desktop");
   };
 }
