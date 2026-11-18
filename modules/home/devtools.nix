@@ -17,12 +17,23 @@ lib.mkIf osConfig.my.devtools.enable {
     };
   };
 
+  # GitHub CLI. Also makes git use `gh auth` for https://github.com pushes and
+  # pulls. Log in once with `gh auth login`.
+  programs.gh = {
+    enable = true;
+    settings.git_protocol = "https";
+  };
+
   programs.neovim = {
     enable = true;
     defaultEditor = true;
     viAlias = true;
     vimAlias = true;
   };
+
+  # Per-project tool versions (Node, Python, ...) from mise.toml, activated
+  # in zsh.
+  programs.mise.enable = true;
 
   home.packages = with pkgs; [
     ripgrep
@@ -34,6 +45,9 @@ lib.mkIf osConfig.my.devtools.enable {
     unzip
     nil # Nix language server
     nixfmt
-    claude-code # unfree, allowed in modules/nixos/devtools.nix
+    uv # Python package and project manager; mise.toml pins override it per project
+    claude-code # unfree (modules/nixos/devtools.nix), from unstable (flake.nix)
+    codex # OpenAI's coding agent CLI, from unstable (flake.nix)
+    t3code # GUI for coding agents, from unstable (flake.nix)
   ];
 }
