@@ -29,7 +29,7 @@ rebuilding.
 | GPU | NVIDIA 595 driver with the open kernel modules |
 | Gaming | Steam with Proton-GE, gamemode, gamescope, MangoHud, protontricks, controller rules |
 | Apps | Helium, Bitwarden, Discord, Signal, Spotify, Nautilus, foot, DaVinci Resolve |
-| Services | PipeWire, Bluetooth, NetworkManager, Tailscale, Syncthing, Avahi (`station.local`), USB automount, screen sharing portals |
+| Services | PipeWire, Bluetooth, NetworkManager, Tailscale, Syncthing, Avahi (`station.local`), USB automount, screen sharing portals, Synology shares in `/mnt/syno` |
 | Dev tools | zsh, git, gh, neovim, mise, uv, ripgrep, fd, jq, Docker, nix-ld (for prebuilt binaries like mise's Godot), Claude Code, Codex, T3 Code |
 | Theme | Catppuccin Mocha everywhere, Inter and JetBrainsMono Nerd Font, `wallpapers/waves.jpg` |
 | Upkeep | weekly garbage collection and store optimisation, 10 boot menu entries kept |

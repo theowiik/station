@@ -22,7 +22,10 @@ let
   };
 in
 {
-  imports = [ ./hardware-configuration.nix ];
+  imports = [
+    ./hardware-configuration.nix
+    ./nas.nix
+  ];
 
   networking.hostName = "station";
   my.locale = locale;
