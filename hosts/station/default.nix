@@ -11,7 +11,7 @@
 # The disk layout, partition UUIDs and kernel modules are deliberately not
 # here. They come from hardware-configuration.nix, which is generated on this
 # machine at install time (it is a placeholder until then).
-{ ... }:
+{ pkgs, ... }:
 let
   # Language, regional formats, time zone and keyboard, in one place.
   locale = {
@@ -36,6 +36,13 @@ in
   my.gaming.enable = true;
   my.shell.enable = true;
   my.devtools.enable = true;
+
+  # DaVinci Resolve (the free version), here and not in the shared desktop
+  # apps because it needs the NVIDIA GPU. On Linux the free version cannot
+  # decode or encode H.264/H.265 or AAC audio: convert such clips first, e.g.
+  # ffmpeg -i in.mp4 -c:v dnxhd -profile:v dnxhr_hq -c:a pcm_s16le out.mov
+  environment.systemPackages = [ pkgs.davinci-resolve ];
+  my.unfreePackages = [ "davinci-resolve" ];
 
   # AMD microcode, and firmware for the MT7922 Wi-Fi and Bluetooth chip and
   # the integrated GPU.
