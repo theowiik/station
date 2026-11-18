@@ -1,246 +1,151 @@
 # station
 
-NixOS configuration for my gaming desktop.
+My NixOS config for my own gaming desktop. It's not a general-purpose
+template. The hardware, monitors, user name (`theo`), keyboard layout and app
+picks are all for this one machine and the way I use it. Feel free to borrow
+pieces, but don't expect it to work on other hardware as is.
 
-One machine (`station`) plus a Hyper-V guest (`station-vm`) to test the
-config before installing it. The structure is ready for a second real host:
-everything reusable is a module under `modules/` with a `my.<name>.enable`
-switch.
+There are two hosts:
 
-## What you get
+- `station`: the desktop (Ryzen 7 9800X3D, RTX 3070, NixOS on its own drive
+  next to Windows).
+- `station-vm`: a Hyper-V guest for testing changes before they touch the
+  real machine.
+
+## Everyday use
+
+| Command | What it does |
+|---|---|
+| `rebuild` | apply changes from `~/station` (`sudo nixos-rebuild switch --flake ~/station`) |
+| `update` | update every flake input (`flake.lock`), then rebuild. Commit `flake.lock` afterwards |
+| `stn-help` | list the aliases |
+| `niri-help [word]` | list niri keybinds, optionally filtered |
+
+The flake picks the host by hostname. A flake only sees files git knows
+about, so `git add` new files before rebuilding.
+
+## What's in it
 
 | | |
 |---|---|
-| Base | NixOS 26.05 "Yarara" with Home Manager release-26.05, flakes only (no channels) |
-| Main session | niri 26.04 from nixpkgs, with DankMaterialShell (DMS) 1.4.6 as the shell: bar, launcher, notifications, control center, lock screen, wallpaper, polkit agent |
-| X11 apps | xwayland-satellite 0.8.3, started by niri on demand |
-| Fallback session | Hyprland 0.55.4 from nixpkgs with Waybar, fuzzel, mako, hyprlock and swaybg |
-| Login | greetd with tuigreet (text login screen, pick the session with F3) |
-| GPU (station) | NVIDIA 595 driver with the open kernel modules, modesetting, 32-bit graphics |
-| Gaming (station) | Steam with Remote Play and Proton-GE, gamemode, gamescope, MangoHud, protontricks, controller udev rules |
-| Everyday | PipeWire (ALSA, PulseAudio, WirePlumber) with pavucontrol, Bluetooth with blueman, NetworkManager, screen sharing portals, USB automount (udiskie), Nautilus, Firefox, Discord, fonts with emoji and CJK |
-| Theme | Catppuccin Mocha everywhere: DMS, foot, GTK 3 and 4, Qt 5 and 6, both compositors, the lock screens and the text console. One font pair (Inter, JetBrainsMono Nerd Font) and one wallpaper |
-| Shell | zsh configured with Home Manager, no framework |
-| Upkeep | weekly garbage collection and store optimisation, at most 10 boot menu entries, no hibernation |
-
-The versions are the ones pinned by `flake.lock` (nixpkgs `nixos-26.05`).
+| Base | NixOS 26.05 with Home Manager, flakes only (no channels). A few fast-moving tools come from nixos-unstable (see `flake.nix`) |
+| Desktop | niri with DankMaterialShell (bar, launcher, notifications, lock screen). Hyprland with Waybar and fuzzel as the fallback session. Login with greetd and tuigreet |
+| GPU | NVIDIA 595 driver with the open kernel modules |
+| Gaming | Steam with Proton-GE, gamemode, gamescope, MangoHud, protontricks, controller rules |
+| Apps | Helium, Bitwarden, Discord, Signal, Spotify, Nautilus, foot |
+| Services | PipeWire, Bluetooth, NetworkManager, Tailscale, Syncthing, Avahi (`station.local`), USB automount, screen sharing portals |
+| Dev tools | zsh, git, gh, neovim, mise, uv, ripgrep, fd, jq, Docker, nix-ld (for prebuilt binaries like mise's Godot), Claude Code, Codex, T3 Code |
+| Theme | Catppuccin Mocha everywhere, Inter and JetBrainsMono Nerd Font, `wallpapers/waves.jpg` |
+| Upkeep | weekly garbage collection and store optimisation, 10 boot menu entries kept |
 
 ## Layout
 
 ```
-flake.nix                    inputs (nixpkgs, home-manager) and the two hosts
+flake.nix                 inputs and the two hosts
 hosts/
-  station/                   the real machine: hardware notes, NVIDIA, gaming, TODOs
-  station-vm/                the Hyper-V guest
+  station/                the desktop: monitors, NVIDIA, gaming, TODOs
+  station-vm/             the Hyper-V guest
 modules/
-  nixos/                     NixOS modules
-    base.nix                 Nix settings, garbage collection, boot loader, power
-    locale.nix               my.locale: time zone, language, formats, keyboard
-    user.nix                 my.user and Home Manager
-    theme.nix                my.theme: palette, fonts, wallpaper, cursor, icons
-    desktop/                 my.desktop: sessions, login screen, DMS, audio, Bluetooth, fonts, apps
-    nvidia.nix               my.nvidia
-    gaming.nix               my.gaming
-    shell.nix                my.shell
-    devtools.nix             my.devtools
-  home/                      Home Manager modules, following the my.* switches
-    niri.nix  dms.nix        niri config and DMS settings
-    hyprland.nix             Hyprland, Waybar, fuzzel, mako, hyprlock
-    theme.nix                GTK, Qt, cursor and icons
+  nixos/                  system modules, each behind a my.<name>.enable switch
+    base.nix              Nix settings, garbage collection, boot loader
+    locale.nix            time zone, language, keyboard
+    user.nix              the user and Home Manager
+    theme.nix             palette, fonts, wallpaper, cursor, icons
+    desktop/              sessions, login, services, apps
+    nvidia.nix  gaming.nix  shell.nix  devtools.nix
+  home/                   Home Manager modules, following the same switches
+    niri.nix  dms.nix     niri config and DMS settings
+    hyprland.nix          Hyprland, Waybar, fuzzel, mako, hyprlock
+    theme.nix             GTK, Qt, cursor and icons
     terminal.nix  shell.nix  devtools.nix  desktop.nix
+pkgs/helium.nix           Helium browser, wrapping the official AppImage
+wallpapers/
 ```
 
-## Before you install: the TODOs
+## Sessions and keys
 
-Search the repo for `TODO(` to find them all.
+At the tuigreet login screen, press **F3** to choose niri or Hyprland. It
+remembers the last choice. F12 opens the power menu. If a session fails,
+you land back at the login screen.
 
-- `hosts/*/hardware-configuration.nix` are placeholders with fake devices, so
-  the flake builds before installing. Every build prints a warning until they
-  are replaced (see the install steps below).
-- `TODO(secure-boot)`: Secure Boot is on in the firmware of station. Turn it
-  off before booting the NixOS installer.
-- `TODO(suspend)`: suspend is untested. Hibernation is off on purpose.
-- `TODO(gpu)`: the CPU has an integrated GPU next to the RTX 3070. Check that
-  the sessions use the RTX 3070.
-- `TODO(monitor)`: no resolutions or refresh rates are set. Check that the
-  monitor runs at its full refresh rate.
-- `TODO(steam)`: a switch for the known black Steam window workaround.
-- `TODO(windows)`: how to boot Windows (firmware boot menu for now).
-- `TODO(git)`: your commit name and email.
-- Secrets: see [Secrets](#secrets).
-
-## Test in a Hyper-V VM
-
-Hyper-V, not VirtualBox: Hyper-V is already on for WSL2 and Docker, and
-VirtualBox on top of it is too slow to boot NixOS.
-
-1. Create a VM in Hyper-V Manager (Action, New, Virtual Machine):
-   - **Generation 2**.
-   - Startup memory 8192 MB; dynamic memory can stay on.
-   - Network: **Default Switch**.
-   - A new virtual disk of 60 GB or more, and the NixOS 26.05 graphical ISO
-     as the install medium.
-2. Before starting it, open the VM's **Settings**:
-   - Security: turn **Secure Boot off**.
-   - Processor: 4 virtual processors.
-3. Start it. Boot the ISO and install. Pick **No desktop** (this
-   repo brings the desktop), the Swedish keyboard, and create the user with
-   the name `theo` and a password. Reboot into the new system.
-4. Log in on the text console and switch to this repo:
-
-   ```sh
-   nix-shell -p git
-   git clone <repo-url> ~/station
-   cd ~/station
-   sudo nixos-generate-config --show-hardware-config > hosts/station-vm/hardware-configuration.nix
-   git add hosts/station-vm/hardware-configuration.nix
-   sudo NIX_CONFIG="experimental-features = nix-command flakes" nixos-rebuild switch --flake .#station-vm
-   ```
-
-   `<repo-url>` is wherever this repo is pushed (its `origin` is
-   `https://github.com/theowiik/station.git`; push it first). A flake only
-   sees files that git knows about, which is why the generated file is added
-   with `git add` before the rebuild. Commit it afterwards.
-   If your user name differs from the one you created in the installer, set
-   a password for it with `sudo passwd <name>` before rebooting.
-5. Reboot. The login screen starts Hyprland by default in the VM, because
-   niri may not render well in a VM. Press F3 at the login screen to try
-   niri.
-
-## Install on the real machine
-
-NixOS goes on its own drive. Do not touch the Windows drive.
-
-1. In the firmware (Del at power on), turn **Secure Boot off**.
-2. Boot the NixOS 26.05 ISO from a USB stick (F11 opens the boot menu on MSI
-   boards).
-3. Install, either way:
-   - **With the graphical installer**, like in the VM: pick the NixOS drive
-     (check the model and size carefully), "No desktop", the Swedish keyboard
-     and the user `theo`. After the reboot, log in on the text
-     console and run:
-
-     ```sh
-     nix-shell -p git
-     git clone <repo-url> ~/station
-     cd ~/station
-     sudo nixos-generate-config --show-hardware-config > hosts/station/hardware-configuration.nix
-     git add hosts/station/hardware-configuration.nix
-     sudo NIX_CONFIG="experimental-features = nix-command flakes" nixos-rebuild switch --flake .#station
-     ```
-
-   - **Or with `nixos-install`**: partition the NixOS drive yourself (an EFI
-     system partition of at least 1 GB, FAT32, plus a root partition), mount
-     root on `/mnt` and the EFI partition on `/mnt/boot`, then:
-
-     ```sh
-     nix-shell -p git
-     git clone <repo-url> /tmp/station
-     cd /tmp/station
-     sudo nixos-generate-config --root /mnt --show-hardware-config > hosts/station/hardware-configuration.nix
-     git add hosts/station/hardware-configuration.nix
-     sudo NIX_CONFIG="experimental-features = nix-command flakes" nixos-install --flake .#station
-     sudo nixos-enter --root /mnt -c 'passwd <name>'
-     ```
-
-     After the first boot, clone the repo again to `~/station` and copy the
-     generated `hardware-configuration.nix` into it.
-4. Commit the generated `hosts/station/hardware-configuration.nix` and push
-   it.
-5. Reboot, log in and work through `TODO(suspend)`, `TODO(gpu)` and
-   `TODO(monitor)` in `hosts/station/default.nix`.
-
-After that, rebuild with `rebuild` (a zsh alias for
-`sudo nixos-rebuild switch --flake ~/station`). Update everything with
-`nix flake update`, rebuild, and commit `flake.lock`.
-
-## Choose Niri or Hyprland at login
-
-The login screen is tuigreet, a text login screen that works without GPU
-acceleration.
-
-1. Type the user name and press Enter.
-2. Press **F3** to open the session list and pick **niri** or **Hyprland**.
-3. Type the password and press Enter.
-
-tuigreet remembers the last session per user. Before a session has been
-picked, station starts niri and station-vm starts Hyprland. If a session
-fails to start you land back at the login screen and can pick the other one.
-F12 opens the power menu.
-
-Main keys in **niri** (Super is the Windows key):
+niri (Super is the Windows key):
 
 | Keys | Action |
 |---|---|
-| Super+D or Super+Space | app launcher (DMS) |
-| Super+T or Super+Enter | terminal (foot) |
+| Super+D / Super+Space | app launcher |
+| Super+T / Super+Enter | terminal |
 | Super+E | file manager |
 | Super+N | notifications |
 | Super+Alt+V | clipboard history |
 | Super+X | power menu |
-| Super+Alt+L | lock the screen |
+| Super+Alt+L | lock |
 | Ctrl+Shift+Esc | task manager |
 | Super+Q | close window |
 | Super+O | overview |
-| Super+Shift+/ | all key bindings |
+| Print | screenshot |
+| Super+Shift+/ | all keybinds |
 | Super+Shift+E | quit niri |
 
-In **Hyprland**: Super+D or Super+Space launcher (fuzzel), Super+T terminal,
-Super+E file manager, Super+Q close, Super+1 to 0 workspaces, Super+Shift+1
-to 0 move window, Super+F maximize, Super+Shift+F fullscreen, Super+Alt+L
-lock, Print screenshot of an area, Super+Shift+E quit.
+Hyprland: Super+D launcher, Super+T terminal, Super+E files, Super+Q close,
+Super+1–0 workspaces, Super+Shift+1–0 move window, Super+F maximize,
+Super+Shift+F fullscreen, Super+Alt+L lock, Print area screenshot,
+Super+Shift+E quit.
 
 ## Gaming notes
 
-- Proton-GE shows up in Steam under Properties, Compatibility, with its
-  version in the name (GE-Proton11-1 in nixpkgs 26.05 at the time of
-  writing).
-- Steam launch options: `mangohud %command%` for the overlay,
-  `gamemoderun %command%` for gamemode, or both.
-- If a fullscreen game misbehaves in niri (cursor escapes, wrong size), the
-  niri wiki suggests running it through gamescope:
-  `gamescope -f -W <width> -H <height> --force-grab-cursor --backend sdl -- %command%`,
-  with the monitor's resolution (2560 by 1440 on station, as seen in Windows).
+- Proton-GE is under Steam, Properties, Compatibility.
+- Launch options: `mangohud %command%`, `gamemoderun %command%`, or both.
+- If a fullscreen game misbehaves in niri (cursor escapes, wrong size), run it
+  through gamescope:
+  `gamescope -f -W 2560 -H 1440 --force-grab-cursor --backend sdl -- %command%`.
 - If the Steam window is completely black in niri, see `TODO(steam)`.
 
-## Roll back to a previous generation
+## Rolling back
 
-Every rebuild creates a new generation with its own entry in the boot menu
-(the 10 newest are kept).
+Every rebuild adds a boot menu entry. To go back, reboot, press an arrow key
+in the systemd-boot menu and pick an older generation. That boots it once.
+To make it stick, run `sudo nixos-rebuild switch --rollback`, or revert the
+change in git and rebuild.
 
-1. Reboot. The systemd-boot menu shows for 5 seconds; press an arrow key to
-   stop the countdown.
-2. Pick an older entry ("NixOS ... Generation N") and press Enter. This boots
-   that generation once; the newest one stays the default.
-3. To stay on the older system, run `sudo nixos-rebuild switch --rollback`,
-   which makes the generation before the newest one the current one again.
-   Or revert the change in git and rebuild.
+## Open TODOs
 
-`nixos-rebuild list-generations` lists the generations.
+Run `grep -rn 'TODO(' .` to find them in the code.
 
-## Secrets
+- `TODO(suspend)`: suspend is untested. Hibernation is off on purpose.
+- `TODO(gpu)`: check that the sessions run on the RTX 3070, not the iGPU.
+- `TODO(steam)`: a switch for the black Steam window workaround.
+- `TODO(windows)`: Windows boots from the firmware boot menu (F11) for now.
+- `TODO(git)`: commit name and email aren't set in the config.
+- Secrets management (sops-nix) isn't set up. There are no secrets in the
+  repo. Passwords are set with `passwd` and stay on the machine.
 
-There are no secrets in this repo, and `.gitignore` blocks common key files.
-User passwords are set with `passwd` and stay on the machine.
+## Reinstalling
 
-TODO: secrets management with sops-nix (for example `hashedPasswordFile` for
-the user or Wi-Fi passwords). It is not set up yet.
+### On the desktop
 
-## What was checked, and what was not
+NixOS goes on its own drive. Leave the Windows drive alone. Secure Boot must
+be off in the firmware (Del at power on).
 
-Checked in WSL2 (Ubuntu 24.04, Nix 2.32.4) on the Windows PC, from a clean
-clone of this repo:
+1. Boot the NixOS 26.05 ISO (F11 for the boot menu). Install with "No
+   desktop", the Swedish keyboard and the user `theo`.
+2. Log in on the text console and run:
 
-- `nix flake check` passes. It only prints the expected warnings about the
-  placeholder hardware configurations.
-- Both configurations build (build only, nothing was switched to):
-  `nix build .#nixosConfigurations.station.config.system.build.toplevel`
-  and the same for `station-vm`.
-- The build also checks the generated niri config with `niri validate` and
-  the Hyprland config with `Hyprland --verify-config`. Both checks were
-  tried on deliberately broken files and do reject them.
+   ```sh
+   nix-shell -p git
+   git clone https://github.com/theowiik/station.git ~/station
+   cd ~/station
+   sudo nixos-generate-config --show-hardware-config > hosts/station/hardware-configuration.nix
+   git add hosts/station/hardware-configuration.nix
+   sudo NIX_CONFIG="experimental-features = nix-command flakes" nixos-rebuild switch --flake .#station
+   ```
 
-This only shows that the configurations evaluate and build. Nothing has run
-yet: the display, the NVIDIA driver, both sessions, DMS, audio, Bluetooth,
-networking, screen sharing, Steam, controllers and suspend are all untested,
-both in the VM and on the real machine.
+3. Commit the new `hardware-configuration.nix` if it changed, then reboot.
+
+### In the Hyper-V VM
+
+Use a Generation 2 VM with Secure Boot off, 8 GB RAM, 4 CPUs, the Default
+Switch and a disk of at least 60 GB. Install the same way as above, using
+`hosts/station-vm` and `.#station-vm`. The VM's `hardware-configuration.nix`
+is still a placeholder, so builds print a warning until you replace it. The
+VM starts Hyprland by default, since niri may not render well without GPU
+acceleration.
