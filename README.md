@@ -2,7 +2,7 @@
 
 NixOS configuration for my gaming desktop.
 
-One machine (`station`) plus a VirtualBox guest (`station-vm`) to test the
+One machine (`station`) plus a Hyper-V guest (`station-vm`) to test the
 config before installing it. The structure is ready for a second real host:
 everything reusable is a module under `modules/` with a `my.<name>.enable`
 switch.
@@ -31,7 +31,7 @@ The versions are the ones pinned by `flake.lock` (nixpkgs `nixos-26.05`).
 flake.nix                    inputs (nixpkgs, home-manager) and the two hosts
 hosts/
   station/                   the real machine: hardware notes, NVIDIA, gaming, TODOs
-  station-vm/                the VirtualBox guest
+  station-vm/                the Hyper-V guest
 modules/
   nixos/                     NixOS modules
     base.nix                 Nix settings, garbage collection, boot loader, power
@@ -69,19 +69,24 @@ Search the repo for `TODO(` to find them all.
 - `TODO(git)`: your commit name and email.
 - Secrets: see [Secrets](#secrets).
 
-## Test in a VirtualBox VM
+## Test in a Hyper-V VM
 
-1. Create a VM in VirtualBox on Windows:
-   - Type Linux, version "Other Linux (64-bit)".
-   - System: turn on **Enable EFI** and leave Secure Boot off. At least 8 GB
-     of RAM and 4 CPUs.
-   - Display: graphics controller **VMSVGA**, **Enable 3D Acceleration**, and
-     video memory at the maximum the dialog allows (256 MB).
-   - A disk of 60 GB or more.
-2. Boot the NixOS 26.05 graphical ISO and install. Pick **No desktop** (this
+Hyper-V, not VirtualBox: Hyper-V is already on for WSL2 and Docker, and
+VirtualBox on top of it is too slow to boot NixOS.
+
+1. Create a VM in Hyper-V Manager (Action, New, Virtual Machine):
+   - **Generation 2**.
+   - Startup memory 8192 MB; dynamic memory can stay on.
+   - Network: **Default Switch**.
+   - A new virtual disk of 60 GB or more, and the NixOS 26.05 graphical ISO
+     as the install medium.
+2. Before starting it, open the VM's **Settings**:
+   - Security: turn **Secure Boot off**.
+   - Processor: 4 virtual processors.
+3. Start it. Boot the ISO and install. Pick **No desktop** (this
    repo brings the desktop), the Swedish keyboard, and create the user with
    the name `theo` and a password. Reboot into the new system.
-3. Log in on the text console and switch to this repo:
+4. Log in on the text console and switch to this repo:
 
    ```sh
    nix-shell -p git
@@ -98,8 +103,8 @@ Search the repo for `TODO(` to find them all.
    with `git add` before the rebuild. Commit it afterwards.
    If your user name differs from the one you created in the installer, set
    a password for it with `sudo passwd <name>` before rebooting.
-4. Reboot. The login screen starts Hyprland by default in the VM, because
-   niri may not render in VirtualBox. Press F3 at the login screen to try
+5. Reboot. The login screen starts Hyprland by default in the VM, because
+   niri may not render well in a VM. Press F3 at the login screen to try
    niri.
 
 ## Install on the real machine

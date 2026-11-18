@@ -1,10 +1,15 @@
-# station-vm: a VirtualBox guest on the Windows host, for testing this repo
+# station-vm: a Hyper-V guest on the Windows host, for testing this repo
 # before installing it on station.
 #
+# Hyper-V because it is already on (WSL2 and Docker use it), and VirtualBox
+# runs too slowly on top of it to even boot.
+#
 # The same desktop, shell and tools as station, without the NVIDIA driver and
-# the gaming extras. The login screen starts Hyprland by default because niri
-# may not render in VirtualBox. Niri stays installed and can be picked at the
-# login screen (F3).
+# the gaming extras. Hyper-V has no 3D acceleration for Linux guests, so both
+# sessions render in software (Mesa llvmpipe): usable for testing the config,
+# not fast. The login screen starts Hyprland by default because niri may not
+# render well in a VM. Niri stays installed and can be picked at the login
+# screen (F3).
 { ... }:
 let
   # Language, regional formats, time zone and keyboard, in one place.
@@ -27,20 +32,14 @@ in
 
   my.desktop.enable = true;
   my.desktop.defaultSession = "hyprland";
-  # The hardware cursor is often invisible in VirtualBox.
+  # The hardware cursor is often invisible in VMs.
   my.desktop.hyprland.softwareCursor = true;
   my.shell.enable = true;
   my.devtools.enable = true;
 
-  # VirtualBox Guest Additions: the display follows the VM window size
-  # (VMSVGA), shared clipboard, drag and drop, and shared folders (vboxsf).
-  # Checked against the NixOS wiki VirtualBox page and the nixpkgs 26.05
-  # module, where clipboard and drag and drop are on by default.
-  virtualisation.virtualbox.guest = {
-    enable = true;
-    clipboard = true;
-    dragAndDrop = true;
-  };
+  # Hyper-V guest support: the Hyper-V kernel modules in the initrd (storage,
+  # network, display, keyboard, mouse) and the integration services daemons.
+  virtualisation.hypervGuest.enable = true;
 
   system.stateVersion = "26.05";
 }

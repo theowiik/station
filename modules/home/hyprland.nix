@@ -201,7 +201,7 @@ lib.mkIf desktop.enable {
     portalPackage = null;
     configType = "lua";
     # Starts hyprland-session.target (bound to graphical-session.target), so
-    # user services like udiskie and the VirtualBox clipboard run here too.
+    # user services like udiskie run here too.
     systemd.enable = true;
     extraConfig = luaConfig;
   };
