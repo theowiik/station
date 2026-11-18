@@ -83,6 +83,8 @@ let
             kb_layout = ${lua osConfig.my.locale.keyboardLayout},
             numlock_by_default = true,
             follow_mouse = 1,
+            -- No mouse acceleration: pointer speed follows the mouse 1:1.
+            accel_profile = "flat",
         },
         misc = {
             force_default_wallpaper = 0,
@@ -143,9 +145,6 @@ let
     hl.bind("XF86AudioPause", hl.dsp.exec_cmd(${lua "${exe pkgs.playerctl} play-pause"}), { locked = true })
     hl.bind("XF86AudioNext", hl.dsp.exec_cmd(${lua "${exe pkgs.playerctl} next"}), { locked = true })
     hl.bind("XF86AudioPrev", hl.dsp.exec_cmd(${lua "${exe pkgs.playerctl} previous"}), { locked = true })
-
-    -- The Firefox picture-in-picture player floats.
-    hl.window_rule({ name = "float-firefox-pip", match = { class = "firefox", title = "^Picture-in-Picture$" }, float = true })
   '';
 
   waybarCss = ''

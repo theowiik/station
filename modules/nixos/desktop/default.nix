@@ -41,6 +41,22 @@ in
       '';
     };
 
+    niri.outputs = mkOption {
+      type = types.lines;
+      default = "";
+      example = ''
+        output "DP-1" {
+            mode "2560x1440@164.958"
+            position x=0 y=0
+        }
+      '';
+      description = ''
+        niri output blocks (KDL): mode, position and on/off of each monitor.
+        Empty means niri detects the monitors and places them left to right
+        by itself. Names come from `niri msg outputs`.
+      '';
+    };
+
     hyprland = {
       drmDevices = mkOption {
         type = types.nullOr types.str;

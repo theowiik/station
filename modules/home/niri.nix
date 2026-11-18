@@ -55,9 +55,15 @@ let
             tap
             natural-scroll
         }
+
+        // No mouse acceleration: pointer speed follows the mouse 1:1.
+        mouse {
+            accel-profile "flat"
+        }
     }
 
-    // No output blocks: monitors and their modes are detected automatically.
+    // Monitors (my.desktop.niri.outputs). Without blocks, niri detects them.
+    ${desktop.niri.outputs}
 
     layout {
         gaps 16
@@ -105,12 +111,6 @@ let
     screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
 
     ${debugSection}
-
-    // The Firefox picture-in-picture player floats.
-    window-rule {
-        match app-id=r#"firefox$"# title="^Picture-in-Picture$"
-        open-floating true
-    }
 
     // Steam notifications are separate windows. Put them in a corner
     // (niri wiki, Application Issues).
@@ -247,6 +247,7 @@ let
         Mod+Shift+V { switch-focus-between-floating-and-tiling; }
         Mod+W { toggle-column-tabbed-display; }
 
+        Mod+Shift+S { screenshot; }
         Print { screenshot; }
         Ctrl+Print { screenshot-screen; }
         Alt+Print { screenshot-window; }
@@ -264,7 +265,78 @@ let
     niri validate --config ${kdl}
     cp ${kdl} $out
   '';
+  # niri-help: the binds block of the config above as a readable list. The
+  # comments in the block become section headings, and a bind shows its
+  # hotkey-overlay-title, or else its action with store paths shortened.
+  # `niri-help <word>` keeps only the binds that mention that word.
+  # The binds shown first under "Get started", in plain words. A key that is
+  # no longer bound in the config is left out, so this list cannot lie.
+  getStarted = [
+    [ "Mod+T" "open a terminal" ]
+    [ "Mod+D" "open the app launcher" ]
+    [ "Mod+E" "open the file manager" ]
+    [ "Mod+Q" "close the window" ]
+    [ "Mod+Left" "focus the column to the left (Right for the other way)" ]
+    [ "Mod+Ctrl+Left" "move the column left (Right for the other way)" ]
+    [ "Mod+1" "go to workspace 1 (2 to 9 likewise)" ]
+    [ "Mod+Ctrl+1" "move the column to workspace 1" ]
+    [ "Mod+O" "overview of all windows and workspaces" ]
+    [ "Mod+R" "cycle the column width" ]
+    [ "Mod+F" "maximize the column" ]
+    [ "Mod+Shift+F" "fullscreen the window" ]
+    [ "Mod+V" "float or tile the window" ]
+    [ "Mod+Shift+S" "take a screenshot" ]
+    [ "Super+Alt+L" "lock the screen" ]
+    [ "Mod+X" "power menu" ]
+    [ "Mod+Shift+Slash" "show the hotkey overlay" ]
+  ];
+
+  niriHelp = pkgs.writeShellScriptBin "niri-help" ''
+    if [ -t 1 ]; then b=$'\e[1m'; r=$'\e[0m'; else b= r=; fi
+    [ -z "$1" ] && printf '%sniri keybinds%s  (Mod is the Super key; Mod+Shift+/ shows the overlay)\n' "$b" "$r"
+    exec ${lib.getExe pkgs.gawk} -v q="$*" -v b="$b" -v r="$r" '
+      BEGIN {
+        ${lib.concatImapStrings (i: g: ''
+          gk[${toString i}] = "${lib.elemAt g 0}"; gd[${toString i}] = "${lib.elemAt g 1}"
+        '') getStarted}
+        ng = ${toString (lib.length getStarted)}
+      }
+      END {
+        if (q == "") {
+          printf "\n%sGet started%s\n", b, r
+          for (i = 1; i <= ng; i++) if (gk[i] in bound) printf "  %-26s %s\n", gk[i], gd[i]
+          printf "\n%sAll keybinds%s\n", b, r
+        }
+        printf "%s", out
+      }
+      /^binds \{/ { inb = 1; next }
+      inb && /^\}/ { exit }
+      !inb { next }
+      { sub(/^[ \t]+/, "") }
+      /^$/ { next }
+      /^\/\// {
+        if (q == "") { sub(/^\/\/ */, ""); out = out sprintf("\n%s%s%s\n", b, $0, r) }
+        next
+      }
+      {
+        key = $1
+        bound[key] = 1
+        if (match($0, /hotkey-overlay-title="[^"]*"/)) {
+          desc = substr($0, RSTART + 22, RLENGTH - 23)
+        } else {
+          desc = $0
+          sub(/^[^{]*\{ */, "", desc)
+          sub(/;? *\}[^}]*$/, "", desc)
+          gsub(/\/nix\/store\/[^\/]*\/bin\//, "", desc)
+          gsub(/"/, "", desc)
+        }
+        line = sprintf("  %-26s %s", key, desc)
+        if (q == "" || index(tolower(line), tolower(q))) out = out line "\n"
+      }
+    ' ${validated}
+  '';
 in
 lib.mkIf desktop.enable {
   xdg.configFile."niri/config.kdl".source = validated;
+  home.packages = [ niriHelp ];
 }

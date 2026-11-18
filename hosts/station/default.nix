@@ -61,10 +61,25 @@ in
   # my.desktop.niri.renderDevice = "/dev/dri/renderD128";
   # my.desktop.hyprland.drmDevices = "/dev/dri/card1";
 
-  # TODO(monitor): monitors are detected automatically and no mode is set. In
-  # Windows the monitor runs at 2560x1440 and 164 Hz. If a session picks a
-  # lower refresh rate, list the modes with `niri msg outputs` (niri) or
-  # `hyprctl monitors all` (Hyprland) and add an output to the session config.
+  # Monitors in niri: the BenQ stands left of the LG, bottom edges aligned.
+  # The Samsung (a TV on DP-5) stays off; it is not a desk monitor.
+  # Names and modes come from `niri msg outputs`.
+  my.desktop.niri.outputs = ''
+    output "PNP(BNQ) BenQ XL2411Z K5E04337SL0" {
+        mode "1920x1080@60.000"
+        position x=0 y=360
+    }
+
+    output "LG Electronics LG ULTRAGEAR 108MALF2AW84" {
+        mode "2560x1440@164.958"
+        position x=1920 y=0
+        focus-at-startup
+    }
+
+    output "Samsung Electric Company SAMSUNG 0x01000E00" {
+        off
+    }
+  '';
 
   # TODO(steam): if the Steam window is completely black in the niri session,
   # set this to true (see modules/nixos/gaming.nix).
