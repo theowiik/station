@@ -8,10 +8,11 @@
 lib.mkIf osConfig.my.devtools.enable {
   programs.git = {
     enable = true;
-    # TODO(git): the name and email for your commits are not in this repo.
-    # Add them below as user.name and user.email. (`git config --global`
-    # cannot write here, because Home Manager owns ~/.config/git/config.)
+    # Home Manager owns ~/.config/git/config, so `git config --global`
+    # cannot write there; set things here instead.
     settings = {
+      user.name = "Theo Wiik";
+      user.email = "theo.le.wiik@gmail.com";
       init.defaultBranch = "main";
       pull.rebase = true;
     };
