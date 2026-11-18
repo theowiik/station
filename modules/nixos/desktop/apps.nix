@@ -1,4 +1,5 @@
-# Apps every desktop gets: browsers, Discord, file manager and small GUI tools.
+# Apps every desktop gets: browser, password manager, Discord, Signal, Spotify, file manager
+# and small GUI tools.
 {
   config,
   lib,
@@ -6,11 +7,12 @@
   ...
 }:
 lib.mkIf config.my.desktop.enable {
-  programs.firefox.enable = true;
-
   environment.systemPackages = with pkgs; [
     (callPackage ../../../pkgs/helium.nix { }) # browser, wraps the official AppImage
+    bitwarden-desktop # password manager
     discord
+    signal-desktop # messaging
+    spotify
     nautilus # file manager, also the file chooser of the GNOME portal
     file-roller # archives
     pavucontrol # volume control
@@ -22,5 +24,11 @@ lib.mkIf config.my.desktop.enable {
     libnotify # notify-send
   ];
 
-  my.unfreePackages = [ "discord" ];
+  networking.firewall.allowedTCPPorts = [ 57621 ];
+  networking.firewall.allowedUDPPorts = [ 57621 ];
+
+  my.unfreePackages = [
+    "discord"
+    "spotify"
+  ];
 }

@@ -35,9 +35,9 @@ lib.mkIf osConfig.my.desktop.enable {
   xdg.mimeApps = {
     enable = true;
     defaultApplications = {
-      "text/html" = "firefox.desktop";
-      "x-scheme-handler/http" = "firefox.desktop";
-      "x-scheme-handler/https" = "firefox.desktop";
+      "text/html" = "helium.desktop";
+      "x-scheme-handler/http" = "helium.desktop";
+      "x-scheme-handler/https" = "helium.desktop";
       "inode/directory" = "org.gnome.Nautilus.desktop";
     };
   };
