@@ -67,11 +67,6 @@ in
           separated by colons. null lets Hyprland pick.
         '';
       };
-
-      softwareCursor = lib.mkEnableOption ''
-        a software cursor in Hyprland. Useful in virtual machines, where the
-        hardware cursor is often invisible
-      '';
     };
   };
 }

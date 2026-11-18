@@ -5,12 +5,8 @@ template. The hardware, monitors, user name (`theo`), keyboard layout and app
 picks are all for this one machine and the way I use it. Feel free to borrow
 pieces, but don't expect it to work on other hardware as is.
 
-There are two hosts:
-
-- `station`: the desktop (Ryzen 7 9800X3D, RTX 3070, NixOS on its own drive
-  next to Windows).
-- `station-vm`: a Hyper-V guest for testing changes before they touch the
-  real machine.
+The machine is `station`: Ryzen 7 9800X3D, RTX 3070, with NixOS on its own
+drive next to Windows.
 
 ## Everyday use
 
@@ -21,8 +17,8 @@ There are two hosts:
 | `stn-help` | list the aliases |
 | `niri-help [word]` | list niri keybinds, optionally filtered |
 
-The flake picks the host by hostname. A flake only sees files git knows
-about, so `git add` new files before rebuilding.
+A flake only sees files git knows about, so `git add` new files before
+rebuilding.
 
 ## What's in it
 
@@ -41,10 +37,9 @@ about, so `git add` new files before rebuilding.
 ## Layout
 
 ```
-flake.nix                 inputs and the two hosts
+flake.nix                 inputs and the station host
 hosts/
   station/                the desktop: monitors, NVIDIA, gaming, TODOs
-  station-vm/             the Hyper-V guest
 modules/
   nixos/                  system modules, each behind a my.<name>.enable switch
     base.nix              Nix settings, garbage collection, boot loader
@@ -121,8 +116,6 @@ Run `grep -rn 'TODO(' .` to find them in the code.
 
 ## Reinstalling
 
-### On the desktop
-
 NixOS goes on its own drive. Leave the Windows drive alone. Secure Boot must
 be off in the firmware (Del at power on).
 
@@ -141,11 +134,3 @@ be off in the firmware (Del at power on).
 
 3. Commit the new `hardware-configuration.nix` if it changed, then reboot.
 
-### In the Hyper-V VM
-
-Use a Generation 2 VM with Secure Boot off, 8 GB RAM, 4 CPUs, the Default
-Switch and a disk of at least 60 GB. Install the same way as above, using
-`hosts/station-vm` and `.#station-vm`. The VM's `hardware-configuration.nix`
-is still a placeholder, so builds print a warning until you replace it. The
-VM starts Hyprland by default, since niri may not render well without GPU
-acceleration.

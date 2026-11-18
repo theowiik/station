@@ -58,7 +58,6 @@
     {
       nixosConfigurations = {
         station = mkHost ./hosts/station;
-        station-vm = mkHost ./hosts/station-vm;
       };
 
       # `nix fmt` formats every Nix file in the repo.

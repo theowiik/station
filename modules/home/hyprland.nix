@@ -98,10 +98,6 @@ let
             preserve_split = true,
         },
     })
-    ${lib.optionalString desktop.hyprland.softwareCursor ''
-      -- Software cursor (my.desktop.hyprland.softwareCursor).
-      hl.config({ cursor = { no_hardware_cursors = true } })
-    ''}
     -- Programs
     hl.bind(mod .. " + T", hl.dsp.exec_cmd(${lua terminal}))
     hl.bind(mod .. " + RETURN", hl.dsp.exec_cmd(${lua terminal}))

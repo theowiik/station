@@ -1,5 +1,4 @@
-# foot, a Wayland terminal. It renders on the CPU, so it also works in a
-# virtual machine without 3D acceleration.
+# foot, a Wayland terminal.
 { lib, osConfig, ... }:
 let
   theme = osConfig.my.theme;

@@ -9,8 +9,8 @@
 #   Firmware  UEFI (so systemd-boot), Secure Boot currently on
 #
 # The disk layout, partition UUIDs and kernel modules are deliberately not
-# here. They come from hardware-configuration.nix, which is generated on this
-# machine at install time (it is a placeholder until then).
+# here. They come from hardware-configuration.nix, which was generated on this
+# machine at install time.
 { pkgs, ... }:
 let
   # Language, regional formats, time zone and keyboard, in one place.

@@ -26,7 +26,7 @@ let
   ++ [
     {
       name = "rebuild";
-      # The flake output is picked by hostname (station or station-vm).
+      # The flake output is picked by hostname.
       command = "sudo nixos-rebuild switch --flake ~/station";
       description = "apply config changes from ~/station";
     }
