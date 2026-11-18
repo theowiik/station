@@ -1,4 +1,4 @@
-# Apps every desktop gets: browser, Discord, file manager and small GUI tools.
+# Apps every desktop gets: browsers, Discord, file manager and small GUI tools.
 {
   config,
   lib,
@@ -9,6 +9,7 @@ lib.mkIf config.my.desktop.enable {
   programs.firefox.enable = true;
 
   environment.systemPackages = with pkgs; [
+    (callPackage ../../../pkgs/helium.nix { }) # browser, wraps the official AppImage
     discord
     nautilus # file manager, also the file chooser of the GNOME portal
     file-roller # archives
