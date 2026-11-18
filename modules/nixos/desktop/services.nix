@@ -29,4 +29,36 @@ lib.mkIf config.my.desktop.enable {
   # phones (MTP) and network places to the file manager.
   services.udisks2.enable = true;
   services.gvfs.enable = true;
+
+  # mDNS, so other machines on the LAN resolve as <hostname>.local
+  # (e.g. http://xps.local:8384) and this one is reachable as station.local.
+  services.avahi = {
+    enable = true;
+    nssmdns4 = true;
+    openFirewall = true;
+  };
+
+  # Tailscale VPN. Log in once with `sudo tailscale up`; the login is kept
+  # across rebuilds. openFirewall opens its UDP port for direct connections.
+  services.tailscale = {
+    enable = true;
+    openFirewall = true;
+  };
+
+  # File sync between devices, running as the main user. Devices and folders
+  # are added in the web UI at http://127.0.0.1:8384 and kept across rebuilds.
+  services.syncthing =
+    let
+      home = config.users.users.${config.my.user.name}.home;
+    in
+    {
+      enable = true;
+      user = config.my.user.name;
+      dataDir = home;
+      configDir = "${home}/.config/syncthing";
+      # 22000 TCP/UDP for sync, 21027 UDP for local discovery.
+      openDefaultPorts = true;
+      overrideDevices = false;
+      overrideFolders = false;
+    };
 }
