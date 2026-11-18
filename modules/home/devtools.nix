@@ -34,5 +34,6 @@ lib.mkIf osConfig.my.devtools.enable {
     unzip
     nil # Nix language server
     nixfmt
+    claude-code # unfree, allowed in modules/nixos/devtools.nix
   ];
 }
