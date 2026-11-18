@@ -98,8 +98,8 @@ in
 
     wallpaper = mkOption {
       type = types.path;
-      default = pkgs.nixos-artwork.wallpapers.catppuccin-mocha.gnomeFilePath;
-      defaultText = lib.literalExpression "pkgs.nixos-artwork.wallpapers.catppuccin-mocha.gnomeFilePath";
+      default = ../../wallpapers/waves.jpg;
+      defaultText = lib.literalExpression "./wallpapers/waves.jpg";
       description = "Wallpaper for both sessions and the lock screens.";
     };
 
