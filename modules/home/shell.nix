@@ -1,6 +1,6 @@
 # Plain zsh: completion, history, autosuggestions and syntax highlighting
-# (all built into Home Manager), a Starship prompt and a few aliases. No
-# framework and no personal repos.
+# (all built into Home Manager), a Starship prompt, zoxide, fzf, eza, bat and a
+# few aliases. No framework and no personal repos.
 {
   lib,
   pkgs,
@@ -35,15 +35,21 @@ let
       command = "nix flake update --flake ~/station && sudo nixos-rebuild switch --flake ~/station";
       description = "update all flake inputs (flake.lock), then rebuild";
     }
+    # eza (below) also makes `ls` itself eza, with icons and git status.
     {
       name = "ll";
-      command = "ls -lh";
-      description = "long listing, human-readable sizes";
+      command = "eza -l";
+      description = "long listing with git status";
     }
     {
       name = "la";
-      command = "ls -lAh";
+      command = "eza -la";
       description = "like ll, plus hidden files";
+    }
+    {
+      name = "lt";
+      command = "eza --tree --level=2";
+      description = "directory tree, two levels deep";
     }
   ];
 
@@ -200,5 +206,56 @@ lib.mkIf osConfig.my.shell.enable {
         error_symbol = "[❯](bold red)";
       };
     };
+  };
+
+  # `z proj` jumps to the most used directory matching "proj"; `zi` picks one
+  # with fzf.
+  programs.zoxide = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+
+  # Fuzzy finder. Ctrl+R searches history, Ctrl+T inserts a file path, Alt+C
+  # cds into a subdirectory. fd lists the files, so .gitignore is respected.
+  programs.fzf =
+    let
+      c = osConfig.my.theme.palette;
+    in
+    {
+      enable = true;
+      enableZshIntegration = true;
+      defaultCommand = "fd --type f --hidden --exclude .git";
+      fileWidgetCommand = "fd --type f --hidden --exclude .git";
+      changeDirWidgetCommand = "fd --type d --hidden --exclude .git";
+      colors = {
+        fg = c.text;
+        bg = "-1"; # the terminal background
+        hl = c.${osConfig.my.theme.accent};
+        "fg+" = c.text;
+        "bg+" = c.surface1;
+        "hl+" = c.${osConfig.my.theme.accent};
+        info = c.overlay2;
+        prompt = c.mauve;
+        pointer = c.mauve;
+        marker = c.green;
+        spinner = c.mauve;
+        header = c.subtext0;
+        border = c.surface2;
+      };
+    };
+
+  # ls replacement: `ls` is eza with icons (from the Nerd Font) and git status.
+  programs.eza = {
+    enable = true;
+    enableZshIntegration = true;
+    icons = "auto";
+    git = true;
+  };
+
+  # cat with syntax highlighting and git changes in the margin. The "ansi"
+  # theme uses the terminal's own colors, so it follows the Graphite palette.
+  programs.bat = {
+    enable = true;
+    config.theme = "ansi";
   };
 }
