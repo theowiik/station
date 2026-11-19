@@ -26,8 +26,20 @@
 let
   cfg = config.my.flstudio;
 
-  # wineasio is built against this Wine, so the two must match.
-  wine = pkgs.wineWow64Packages.stable;
+  # The development branch of Wine (from nixpkgs-unstable, see flake.nix).
+  # FL Studio 26.1.4 and later refuses to start on Wine before 11.21 with "The
+  # validity of the program could not be verified": its signature lists its
+  # attributes out of DER order, and older Wine sorted them before checking
+  # the signature (https://bugs.winehq.org/show_bug.cgi?id=60273). Stable Wine
+  # can replace this once a stable release (12.0) has the fix.
+  wine = pkgs.wineWow64Packages.unstable;
+
+  # WineASIO, built against the same Wine.
+  wineasio = pkgs.wineasio.override {
+    wineWow64Packages = pkgs.wineWow64Packages // {
+      stable = wine;
+    };
+  };
 
   # nixpkgs ships the driver as wineasio64.dll, but the DLL calls itself
   # wineasio.dll, and Wine looks up builtin DLLs by that internal name. Offer
@@ -35,8 +47,8 @@ let
   wineasioDlls = pkgs.runCommand "wineasio-dlls" { } ''
     mkdir -p $out/x86_64-windows $out/x86_64-unix
     for name in wineasio wineasio64; do
-      ln -s ${pkgs.wineasio}/lib/wine/x86_64-windows/wineasio64.dll $out/x86_64-windows/$name.dll
-      ln -s ${pkgs.wineasio}/lib/wine/x86_64-unix/wineasio64.dll.so $out/x86_64-unix/$name.dll.so
+      ln -s ${wineasio}/lib/wine/x86_64-windows/wineasio64.dll $out/x86_64-windows/$name.dll
+      ln -s ${wineasio}/lib/wine/x86_64-unix/wineasio64.dll.so $out/x86_64-unix/$name.dll.so
     done
   '';
 

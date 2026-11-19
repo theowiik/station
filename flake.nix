@@ -6,7 +6,8 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
 
     # Claude Code, Codex and T3 Code release far faster than the stable channel
-    # backports them, so those packages come from unstable instead.
+    # backports them, so those packages come from unstable instead. So does
+    # Wine, for a fix FL Studio needs (see modules/nixos/flstudio.nix).
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     # The Home Manager branch that matches NixOS 26.05.
@@ -31,6 +32,7 @@
         "claude-code"
         "codex"
         "t3code"
+        "wineWow64Packages"
       ];
 
       # This pkgs set is built outside the NixOS module system, so the
