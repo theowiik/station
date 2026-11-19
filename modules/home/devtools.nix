@@ -42,7 +42,9 @@ lib.mkIf osConfig.my.devtools.enable {
     jq
     btop
     tree
+    chafa # show images in the terminal (Ghostty supports real images)
     file
+    gnumake
     unzip
     nil # Nix language server
     nixfmt

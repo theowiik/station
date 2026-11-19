@@ -30,7 +30,7 @@ rebuilding.
 | Gaming | Steam with Proton-GE, gamemode, gamescope, MangoHud, protontricks, controller rules |
 | Apps | Helium, Bitwarden, Discord, Signal, Spotify, Krita, Inkscape, Loupe, Nautilus, Ghostty, DaVinci Resolve, Blender |
 | Services | PipeWire, Bluetooth, NetworkManager, Tailscale, Syncthing, Avahi (`station.local`), USB automount, screen sharing portals, Synology shares in `/mnt/syno` |
-| Dev tools | zsh with Starship, zoxide, fzf, eza and bat, git, gh, neovim, mise, uv, ripgrep, fd, jq, Docker, nix-ld (for prebuilt binaries like mise's Godot), Claude Code, Codex, T3 Code |
+| Dev tools | zsh with Starship, zoxide, fzf, eza and bat, git, gh, neovim, mise, uv, ripgrep, fd, jq, chafa, make, Docker, nix-ld (for prebuilt binaries like mise's Godot), Claude Code, Codex, T3 Code |
 | Theme | Graphite (neutral greys, cornflower blue accent) everywhere, Bibata cursor, Papirus icons, Inter and Fantasque Sans Mono Nerd Font, `wallpapers/dark-turns.jpg` |
 | Upkeep | weekly garbage collection and store optimisation, 10 boot menu entries kept |
 
