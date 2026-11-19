@@ -20,6 +20,17 @@ let
     formats = "sv_SE.UTF-8"; # dates, numbers, currency, paper size, units
     keyboardLayout = "se";
   };
+
+  # The same nixpkgs with CUDA turned on, used only for Blender below.
+  # allowUnfree is needed because CUDA and its libraries are unfree; it only
+  # applies to this package set, not to the system's allowlist.
+  cudaPkgs = import pkgs.path {
+    inherit (pkgs.stdenv.hostPlatform) system;
+    config = {
+      allowUnfree = true;
+      cudaSupport = true;
+    };
+  };
 in
 {
   imports = [
@@ -44,8 +55,25 @@ in
   # apps because it needs the NVIDIA GPU. On Linux the free version cannot
   # decode or encode H.264/H.265 or AAC audio: convert such clips first, e.g.
   # ffmpeg -i in.mp4 -c:v dnxhd -profile:v dnxhr_hq -c:a pcm_s16le out.mov
-  environment.systemPackages = [ pkgs.davinci-resolve ];
+  #
+  # Blender with CUDA/OptiX, so Cycles renders on the RTX 3070. It comes from a
+  # separate copy of the same nixpkgs with cudaSupport on, so only Blender and
+  # its dependencies are CUDA builds, not the whole system. That exact build is
+  # prebuilt in the NixOS CUDA team's cache (nix.settings below); without the
+  # cache it compiles locally, which takes over an hour. Right after a nixpkgs
+  # update the cache can lag behind for a while.
+  environment.systemPackages = [
+    pkgs.davinci-resolve
+    cudaPkgs.blender
+  ];
   my.unfreePackages = [ "davinci-resolve" ];
+
+  nix.settings = {
+    extra-substituters = [ "https://cache.nixos-cuda.org" ];
+    extra-trusted-public-keys = [
+      "cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M="
+    ];
+  };
 
   # AMD microcode, and firmware for the MT7922 Wi-Fi and Bluetooth chip and
   # the integrated GPU.
