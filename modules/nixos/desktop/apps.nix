@@ -1,4 +1,4 @@
-# Apps every desktop gets: browser, password manager, Discord, Signal, Spotify, file manager
+# Apps every desktop gets: browser, password manager, Discord, Signal, Spotify, Krita, Inkscape, file manager
 # and small GUI tools.
 {
   config,
@@ -13,6 +13,8 @@ lib.mkIf config.my.desktop.enable {
     discord
     signal-desktop # messaging
     spotify
+    krita # painting
+    inkscape # vector graphics
     celluloid # video player, a GTK front end for mpv; the default for video
     nautilus # file manager, also the file chooser of the GNOME portal
     file-roller # archives
