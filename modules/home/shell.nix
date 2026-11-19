@@ -103,11 +103,11 @@ lib.mkIf osConfig.my.shell.enable {
 
   # The prompt, two lines:
   #
-  #    ~/station   main !1 ?2   nix-shell  took 3s
-  #   ❯
+  #   ~/station   main !1 ?2   nix-shell  took 3s
+  #      (the NixOS logo)
   #
-  # user@host only shows over SSH. The arrow turns red when the last command
-  # failed. Colors are the shared palette (modules/nixos/theme.nix).
+  # user@host only shows over SSH. The logo on the second line turns red when
+  # the last command failed. Colors are the shared palette (modules/nixos/theme.nix).
   programs.starship = {
     enable = true;
     enableZshIntegration = true;
@@ -119,7 +119,6 @@ lib.mkIf osConfig.my.shell.enable {
       format = lib.concatStrings [
         "$username"
         "$hostname"
-        "$os"
         "$directory"
         "$git_branch"
         "$git_state"
@@ -141,13 +140,6 @@ lib.mkIf osConfig.my.shell.enable {
       hostname = {
         format = "[@$hostname]($style) ";
         style = "bold mauve";
-      };
-
-      os = {
-        disabled = false;
-        format = "[$symbol]($style)";
-        style = "bold cornflower";
-        symbols.NixOS = " ";
       };
 
       directory = {
@@ -202,8 +194,8 @@ lib.mkIf osConfig.my.shell.enable {
       };
 
       character = {
-        success_symbol = "[❯](bold green)";
-        error_symbol = "[❯](bold red)";
+        success_symbol = "[ ](bold green)"; # extra space: the logo is wider than one cell
+        error_symbol = "[ ](bold red)";
       };
     };
   };
