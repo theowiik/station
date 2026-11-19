@@ -84,7 +84,15 @@ lib.mkIf osConfig.my.shell.enable {
   programs.zsh = {
     enable = true;
     enableCompletion = true;
-    autosuggestion.enable = true;
+    autosuggestion = {
+      enable = true;
+      # Grey suggestions from history first, then from Tab completion, so file
+      # and command names show up even when they are not in the history yet.
+      strategy = [
+        "history"
+        "completion"
+      ];
+    };
     syntaxHighlighting.enable = true;
 
     history = {
