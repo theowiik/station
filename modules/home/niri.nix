@@ -15,7 +15,7 @@ let
 
   niri = osConfig.programs.niri.package;
   dms = lib.getExe osConfig.programs.dms-shell.package;
-  foot = lib.getExe pkgs.foot;
+  ghostty = lib.getExe pkgs.ghostty;
   nautilus = lib.getExe pkgs.nautilus;
   wpctl = lib.getExe' osConfig.services.pipewire.wireplumber.package "wpctl";
   playerctl = lib.getExe pkgs.playerctl;
@@ -68,6 +68,8 @@ let
     layout {
         gaps 16
         center-focused-column "never"
+        // A window alone on a workspace sits in the middle, not at the left.
+        always-center-single-column
 
         preset-column-widths {
             proportion 0.33333
@@ -123,8 +125,8 @@ let
         Mod+Shift+Slash { show-hotkey-overlay; }
 
         // Programs and DankMaterialShell.
-        Mod+T hotkey-overlay-title="Terminal: foot" { spawn "${foot}"; }
-        Mod+Return hotkey-overlay-title=null { spawn "${foot}"; }
+        Mod+T hotkey-overlay-title="Terminal: Ghostty" { spawn "${ghostty}"; }
+        Mod+Return hotkey-overlay-title=null { spawn "${ghostty}"; }
         Mod+D hotkey-overlay-title="App launcher" { spawn ${dmsCall "spotlight toggle"}; }
         Mod+Space hotkey-overlay-title=null { spawn ${dmsCall "spotlight toggle"}; }
         Mod+E hotkey-overlay-title="File manager" { spawn "${nautilus}" "--new-window"; }

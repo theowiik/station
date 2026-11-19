@@ -29,7 +29,7 @@ let
   wpctl = lib.getExe' osConfig.services.pipewire.wireplumber.package "wpctl";
   wlCopy = lib.getExe' pkgs.wl-clipboard "wl-copy";
 
-  terminal = exe pkgs.foot;
+  terminal = exe pkgs.ghostty;
   launcher = exe pkgs.fuzzel;
   fileManager = "${exe pkgs.nautilus} --new-window";
   lock = exe pkgs.hyprlock;
