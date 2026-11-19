@@ -43,6 +43,31 @@ lib.mkIf osConfig.my.desktop.enable {
   # pairing agent. The Hyprland config starts both applets itself.
   xdg.configFile = hideAutostart "nm-applet.desktop" // hideAutostart "blueman.desktop";
 
+  # EasyEffects in the background, with DeepFilterNet noise suppression on the
+  # microphone. Apps that record from the default mic get the cleaned-up
+  # sound. Open the EasyEffects window to tune it or add an equalizer.
+  services.easyeffects = {
+    enable = true;
+    preset = "noise-cancelling";
+    extraPresets.noise-cancelling.input = {
+      blocklist = [ ];
+      plugins_order = [ "deepfilternet#0" ];
+      # The EasyEffects defaults; a lower attenuation-limit (in dB) keeps
+      # more of the background if your voice starts to sound processed.
+      "deepfilternet#0" = {
+        bypass = false;
+        input-gain = 0.0;
+        output-gain = 0.0;
+        attenuation-limit = 100.0;
+        min-processing-threshold = -15.0;
+        max-erb-processing-threshold = 35.0;
+        max-df-processing-threshold = 35.0;
+        min-processing-buffer = 0;
+        post-filter-beta = 0.02;
+      };
+    };
+  };
+
   xdg.userDirs = {
     enable = true;
     createDirectories = true;
