@@ -86,7 +86,7 @@ lib.mkIf cfg.enable {
         "--cmd"
         sessionCommands.${cfg.defaultSession}
         "--theme"
-        "border=magenta;text=white;prompt=magenta;time=blue;action=blue;button=magenta;container=black;input=white"
+        "border=blue;text=white;prompt=blue;time=cyan;action=cyan;button=blue;container=black;input=white"
       ];
     };
   };
@@ -101,16 +101,16 @@ lib.mkIf cfg.enable {
       red
       green
       yellow
-      blue
-      pink
+      cornflower
+      mauve
       teal
       text
       surface2
       red
       green
       yellow
-      blue
-      pink
+      lavender
+      mauve
       teal
       subtext0
     ];

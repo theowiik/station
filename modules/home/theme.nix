@@ -120,7 +120,7 @@ let
     overlay0
     overlay0
   ];
-  qtColorScheme = pkgs.writeText "qtct-catppuccin-mocha.conf" ''
+  qtColorScheme = pkgs.writeText "qtct-station.conf" ''
     [ColorScheme]
     active_colors=${qtRoles activeColors}
     inactive_colors=${qtRoles activeColors}

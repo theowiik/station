@@ -28,10 +28,10 @@ rebuilding.
 | Desktop | niri with DankMaterialShell (bar, launcher, notifications, lock screen). Hyprland with Waybar and fuzzel as the fallback session. Login with greetd and tuigreet |
 | GPU | NVIDIA 595 driver with the open kernel modules |
 | Gaming | Steam with Proton-GE, gamemode, gamescope, MangoHud, protontricks, controller rules |
-| Apps | Helium, Bitwarden, Discord, Signal, Spotify, Nautilus, foot, DaVinci Resolve |
+| Apps | Helium, Bitwarden, Discord, Signal, Spotify, Krita, Inkscape, Nautilus, Ghostty, DaVinci Resolve, Blender |
 | Services | PipeWire, Bluetooth, NetworkManager, Tailscale, Syncthing, Avahi (`station.local`), USB automount, screen sharing portals, Synology shares in `/mnt/syno` |
 | Dev tools | zsh, git, gh, neovim, mise, uv, ripgrep, fd, jq, Docker, nix-ld (for prebuilt binaries like mise's Godot), Claude Code, Codex, T3 Code |
-| Theme | Catppuccin Mocha everywhere, Inter and JetBrainsMono Nerd Font, `wallpapers/waves.jpg` |
+| Theme | Graphite (neutral greys, cornflower blue accent) everywhere, Bibata cursor, Papirus icons, Inter and JetBrainsMono Nerd Font, `wallpapers/dark-turns.jpg` |
 | Upkeep | weekly garbage collection and store optimisation, 10 boot menu entries kept |
 
 ## Layout

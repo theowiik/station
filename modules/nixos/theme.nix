@@ -36,47 +36,52 @@ in
   options.my.theme = {
     name = mkOption {
       type = types.str;
-      default = "Catppuccin Mocha";
+      default = "Graphite";
       description = "Name of the theme.";
     };
 
     palette = mkOption {
       type = types.attrsOf types.str;
       description = "Named colors as #rrggbb.";
-      # Catppuccin Mocha, https://catppuccin.com/palette
+      # Graphite: neutral greys with GitHub-dark colors, and a cornflower blue
+      # accent. The keys are Catppuccin's role names (base, surface0, text,
+      # mauve, ...) because the modules use them; the values are not
+      # Catppuccin. From darkest to lightest: crust, mantle, base, surface0-2,
+      # overlay0-2, subtext0-1, text.
       default = {
-        rosewater = "#f5e0dc";
-        flamingo = "#f2cdcd";
-        pink = "#f5c2e7";
-        mauve = "#cba6f7";
-        red = "#f38ba8";
-        maroon = "#eba0ac";
-        peach = "#fab387";
-        yellow = "#f9e2af";
-        green = "#a6e3a1";
-        teal = "#94e2d5";
-        sky = "#89dceb";
-        sapphire = "#74c7ec";
-        blue = "#89b4fa";
-        lavender = "#b4befe";
-        text = "#cdd6f4";
-        subtext1 = "#bac2de";
-        subtext0 = "#a6adc8";
-        overlay2 = "#9399b2";
-        overlay1 = "#7f849c";
-        overlay0 = "#6c7086";
-        surface2 = "#585b70";
-        surface1 = "#45475a";
-        surface0 = "#313244";
-        base = "#1e1e2e";
-        mantle = "#181825";
-        crust = "#11111b";
+        rosewater = "#ffdcd7";
+        flamingo = "#ffa198";
+        pink = "#f778ba";
+        mauve = "#bc8cff";
+        red = "#f85149";
+        maroon = "#ff7b72";
+        peach = "#f0883e";
+        yellow = "#d29922";
+        green = "#3fb950";
+        teal = "#39c5cf";
+        sky = "#56d4dd";
+        sapphire = "#6cb6ff";
+        blue = "#58a6ff";
+        cornflower = "#4c8dff";
+        lavender = "#79c0ff";
+        text = "#e6edf3";
+        subtext1 = "#c1c9d1";
+        subtext0 = "#9da5ae";
+        overlay2 = "#848d97";
+        overlay1 = "#6e7681";
+        overlay0 = "#5c636c";
+        surface2 = "#3a3a3a";
+        surface1 = "#2e2e2e";
+        surface0 = "#232323";
+        base = "#161616";
+        mantle = "#111111";
+        crust = "#0b0b0b";
       };
     };
 
     accent = mkOption {
       type = types.str;
-      default = "mauve";
+      default = "cornflower";
       description = "Name of the palette color used as the accent.";
     };
 
@@ -98,21 +103,22 @@ in
 
     wallpaper = mkOption {
       type = types.path;
-      default = ../../wallpapers/waves.jpg;
-      defaultText = lib.literalExpression "./wallpapers/waves.jpg";
+      default = ../../wallpapers/dark-turns.jpg;
+      defaultText = lib.literalExpression "./wallpapers/dark-turns.jpg";
       description = "Wallpaper for both sessions and the lock screens.";
     };
 
     cursor = {
       name = mkOption {
         type = types.str;
-        default = "catppuccin-mocha-dark-cursors";
+        # Black with a white outline, neutral like the palette.
+        default = "Bibata-Modern-Classic";
         description = "Cursor theme name.";
       };
       package = mkOption {
         type = types.package;
-        default = pkgs.catppuccin-cursors.mochaDark;
-        defaultText = lib.literalExpression "pkgs.catppuccin-cursors.mochaDark";
+        default = pkgs.bibata-cursors;
+        defaultText = lib.literalExpression "pkgs.bibata-cursors";
         description = "Package that provides the cursor theme.";
       };
       size = mkOption {
@@ -124,11 +130,9 @@ in
 
     icons = namedPackage "Icon theme." {
       name = "Papirus-Dark";
-      # Papirus, with the folder icons recolored to match the palette.
-      package = pkgs.catppuccin-papirus-folders.override {
-        flavor = "mocha";
-        accent = "mauve";
-      };
+      # Papirus, with blue folder icons, the closest of its colors to the
+      # cornflower accent.
+      package = pkgs.papirus-icon-theme.override { color = "blue"; };
     };
 
     gtk = namedPackage "GTK 3 theme. GTK 4 apps get the same colors from CSS." {
