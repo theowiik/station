@@ -26,6 +26,20 @@ let
     "video/mp2t"
     "video/x-m4v"
   ];
+
+  # Common image formats, opened with Loupe.
+  imageTypes = [
+    "image/png"
+    "image/jpeg"
+    "image/gif"
+    "image/webp"
+    "image/avif"
+    "image/heic"
+    "image/jxl"
+    "image/bmp"
+    "image/tiff"
+    "image/svg+xml"
+  ];
 in
 lib.mkIf osConfig.my.desktop.enable {
   # Mount USB drives as soon as they are plugged in, with a notification.
@@ -82,6 +96,8 @@ lib.mkIf osConfig.my.desktop.enable {
       "inode/directory" = "org.gnome.Nautilus.desktop";
     }
     # Celluloid (installed in modules/nixos/desktop/apps.nix) for video.
-    // lib.genAttrs videoTypes (_: "io.github.celluloid_player.Celluloid.desktop");
+    // lib.genAttrs videoTypes (_: "io.github.celluloid_player.Celluloid.desktop")
+    # Loupe (modules/nixos/desktop/apps.nix) for images.
+    // lib.genAttrs imageTypes (_: "org.gnome.Loupe.desktop");
   };
 }

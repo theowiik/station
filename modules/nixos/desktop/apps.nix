@@ -1,4 +1,4 @@
-# Apps every desktop gets: browser, password manager, Discord, Signal, Spotify, Krita, Inkscape, file manager
+# Apps every desktop gets: browser, password manager, Discord, Signal, Spotify, Krita, Inkscape, image viewer, file manager
 # and small GUI tools.
 {
   config,
@@ -16,6 +16,7 @@ lib.mkIf config.my.desktop.enable {
     krita # painting
     inkscape # vector graphics
     celluloid # video player, a GTK front end for mpv; the default for video
+    loupe # image viewer (GNOME Image Viewer); the default for images
     nautilus # file manager, also the file chooser of the GNOME portal
     file-roller # archives
     pavucontrol # volume control
