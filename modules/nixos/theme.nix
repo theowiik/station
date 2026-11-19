@@ -91,8 +91,8 @@ in
         package = pkgs.inter;
       };
       mono = namedPackage "Monospace font for the terminal and code." {
-        name = "Iosevka Nerd Font";
-        package = pkgs.nerd-fonts.iosevka;
+        name = "FantasqueSansM Nerd Font"; # Fantasque Sans Mono
+        package = pkgs.nerd-fonts.fantasque-sans-mono;
       };
       size = mkOption {
         type = types.ints.positive;
