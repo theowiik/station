@@ -1,5 +1,5 @@
 # Plain zsh: completion, history, autosuggestions and syntax highlighting
-# (all built into Home Manager), a small prompt and a few aliases. No
+# (all built into Home Manager), a Starship prompt and a few aliases. No
 # framework and no personal repos.
 {
   lib,
@@ -92,13 +92,113 @@ lib.mkIf osConfig.my.shell.enable {
 
     initContent = ''
       bindkey -e
-
-      # Prompt: user@host, the directory, and the git branch when in a repo.
-      autoload -Uz vcs_info
-      precmd() { vcs_info }
-      zstyle ':vcs_info:git:*' formats ' %F{magenta}(%b)%f'
-      setopt PROMPT_SUBST
-      PROMPT='%F{blue}%n@%m%f %F{cyan}%~%f''${vcs_info_msg_0_} %# '
     '';
+  };
+
+  # The prompt, two lines:
+  #
+  #    ~/station   main !1 ?2   nix-shell  took 3s
+  #   ❯
+  #
+  # user@host only shows over SSH. The arrow turns red when the last command
+  # failed. Colors are the shared palette (modules/nixos/theme.nix).
+  programs.starship = {
+    enable = true;
+    enableZshIntegration = true;
+    settings = {
+      add_newline = true;
+      palette = "station";
+      palettes.station = osConfig.my.theme.palette;
+
+      format = lib.concatStrings [
+        "$username"
+        "$hostname"
+        "$os"
+        "$directory"
+        "$git_branch"
+        "$git_state"
+        "$git_status"
+        "$nix_shell"
+        "$python"
+        "$nodejs"
+        "$rust"
+        "$cmd_duration"
+        "$line_break"
+        "$character"
+      ];
+
+      username = {
+        format = "[$user]($style)";
+        style_user = "bold mauve";
+        style_root = "bold red";
+      };
+      hostname = {
+        format = "[@$hostname]($style) ";
+        style = "bold mauve";
+      };
+
+      os = {
+        disabled = false;
+        format = "[$symbol]($style)";
+        style = "bold cornflower";
+        symbols.NixOS = " ";
+      };
+
+      directory = {
+        format = "[$path]($style)[$read_only]($read_only_style) ";
+        style = "bold lavender";
+        truncation_length = 4;
+        truncation_symbol = "…/";
+        truncate_to_repo = false;
+        read_only = " 󰌾";
+        read_only_style = "red";
+      };
+
+      git_branch = {
+        format = "[$symbol$branch]($style) ";
+        symbol = " ";
+        style = "bold mauve";
+      };
+      git_state.style = "bold yellow";
+      git_status = {
+        format = "([$all_status$ahead_behind]($style) )";
+        style = "peach";
+      };
+
+      nix_shell = {
+        format = "[$symbol$state]($style) ";
+        symbol = " ";
+        style = "bold sapphire";
+        impure_msg = "nix-shell";
+        pure_msg = "pure";
+      };
+
+      python = {
+        format = "[$symbol$version( \\($virtualenv\\))]($style) ";
+        symbol = " ";
+        style = "yellow";
+      };
+      nodejs = {
+        format = "[$symbol$version]($style) ";
+        symbol = " ";
+        style = "green";
+      };
+      rust = {
+        format = "[$symbol$version]($style) ";
+        symbol = " ";
+        style = "peach";
+      };
+
+      cmd_duration = {
+        format = "[took $duration]($style)";
+        style = "overlay1";
+        min_time = 2000;
+      };
+
+      character = {
+        success_symbol = "[❯](bold green)";
+        error_symbol = "[❯](bold red)";
+      };
+    };
   };
 }
