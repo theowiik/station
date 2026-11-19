@@ -28,6 +28,7 @@ rebuilding.
 | Desktop | niri with DankMaterialShell (bar, launcher, notifications, lock screen). Hyprland with Waybar and fuzzel as the fallback session. Login with greetd and tuigreet |
 | GPU | NVIDIA 595 driver with the open kernel modules |
 | Gaming | Steam with Proton-GE, gamemode, gamescope, MangoHud, protontricks, controller rules |
+| Music | `flstudio` launcher for FL Studio under Wine, with WineASIO for low latency through PipeWire. FL Studio itself is installed by hand (see `modules/nixos/flstudio.nix`) |
 | Apps | Helium, Bitwarden, Discord, Signal, Spotify, Krita, Inkscape, Loupe, Nautilus, Ghostty, DaVinci Resolve, Blender |
 | Services | PipeWire, Bluetooth, NetworkManager, Tailscale, Syncthing, Avahi (`station.local`), USB automount, screen sharing portals, Synology shares in `/mnt/syno` |
 | Dev tools | zsh with Starship, zoxide, fzf, eza and bat, git, gh, neovim, mise, uv, ripgrep, fd, jq, chafa, make, Docker, nix-ld (for prebuilt binaries like mise's Godot), Claude Code, Codex, T3 Code |
