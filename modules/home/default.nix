@@ -11,6 +11,7 @@
     ./dms.nix
     ./hyprland.nix
     ./shell.nix
+    ./yt.nix
     ./devtools.nix
   ];
 }
