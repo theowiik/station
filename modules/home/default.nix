@@ -13,5 +13,6 @@
     ./shell.nix
     ./yt.nix
     ./devtools.nix
+    ./zed.nix
   ];
 }
