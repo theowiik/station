@@ -49,6 +49,7 @@ in
   my.nvidia.enable = true;
   my.gaming.enable = true;
   my.flstudio.enable = true;
+  my.windowsVm.enable = true;
   my.shell.enable = true;
   my.devtools.enable = true;
 

@@ -1,7 +1,7 @@
 # All NixOS modules of this repo.
 #
 # base, locale, user and theme apply to every host. The feature modules
-# (desktop, nvidia, gaming, flstudio, shell, devtools) do nothing until a host turns
+# (desktop, nvidia, gaming, flstudio, windowsVm, shell, devtools) do nothing until a host turns
 # them on with my.<name>.enable, so a future host (a laptop, say) can pick
 # only what it needs.
 {
@@ -14,6 +14,7 @@
     ./nvidia.nix
     ./gaming.nix
     ./flstudio.nix
+    ./windows-vm.nix
     ./shell.nix
     ./devtools.nix
   ];
