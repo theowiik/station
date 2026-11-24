@@ -1,5 +1,11 @@
-# Everyday services: sound, Bluetooth and removable drives.
-{ config, lib, ... }:
+# Everyday services: sound, Bluetooth, removable drives, networking, sync and
+# remote desktop.
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 lib.mkIf config.my.desktop.enable {
   # Sound: PipeWire with ALSA and PulseAudio compatibility, managed by
   # WirePlumber. pavucontrol (modules/nixos/desktop/apps.nix) is the GUI.
@@ -43,6 +49,44 @@ lib.mkIf config.my.desktop.enable {
   services.tailscale = {
     enable = true;
     openFirewall = true;
+  };
+
+  # Remote desktop: Sunshine streams this machine to Moonlight clients (over
+  # the LAN or Tailscale). RustDesk cannot do this under niri, which has no
+  # RemoteDesktop portal. Sunshine needs no portal: with CAP_SYS_ADMIN it
+  # captures the screen through KMS, and it sends input through uinput.
+  # Pair clients in the web UI at https://localhost:47990.
+  services.sunshine = {
+    enable = true;
+    autoStart = true;
+    capSysAdmin = true;
+    # Sunshine only encodes with NVENC on Linux when it is built with CUDA.
+    package = lib.mkIf config.my.nvidia.enable (pkgs.sunshine.override { cudaSupport = true; });
+  };
+
+  # The CUDA libraries that build is linked against.
+  my.unfreePackages = lib.mkIf config.my.nvidia.enable [
+    "cuda_cudart"
+    "cuda_cccl"
+    "cuda_nvcc"
+  ];
+
+  # The streaming ports, as services.sunshine.openFirewall would open them,
+  # but without 47990, so the web UI (where pairing is approved) can only be
+  # reached from this machine.
+  networking.firewall = {
+    allowedTCPPorts = [
+      47984
+      47989
+      48010
+    ];
+    allowedUDPPorts = [
+      47998
+      47999
+      48000
+      48002
+      48010
+    ];
   };
 
   # File sync between devices, running as the main user. Devices and folders
