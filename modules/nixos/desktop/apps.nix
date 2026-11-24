@@ -1,4 +1,4 @@
-# Apps every desktop gets: browser, password manager, Discord, Signal, Spotify, Notion, Krita, Inkscape, image viewer, file manager
+# Apps every desktop gets: browsers, password manager, Discord, Signal, Spotify, Notion, Krita, Inkscape, image viewer, file manager
 # and small GUI tools.
 {
   config,
@@ -19,6 +19,7 @@ lib.mkIf config.my.desktop.enable {
       icon = "notion";
       categories = [ "Office" ];
     })
+    mullvad-browser # privacy browser (Tor Browser without Tor)
     bitwarden-desktop # password manager
     discord
     signal-desktop # messaging
