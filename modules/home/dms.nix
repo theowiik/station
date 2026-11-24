@@ -75,6 +75,12 @@ let
     # GTK and Qt apps are themed by Home Manager (modules/home/theme.nix).
     gtkThemingEnabled = false;
     qtThemingEnabled = false;
+
+    # Idle (in seconds, 0 = never): turn the monitors off after 30 minutes,
+    # any input wakes them. Never lock or suspend on its own.
+    acMonitorTimeout = 1800;
+    acLockTimeout = 0;
+    acSuspendTimeout = 0;
   };
 
   session = json "dms-session.json" {
